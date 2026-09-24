@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Centurion University - Complaint Tracking System</title>
+<style>
+:root{--p:#667eea;--p2:#764ba2;--ink:#222;--muted:#6b7280;--bg:#f6f7fb;--line:#e5e7eb;--white:#fff;--shadow:0 12px 40px rgba(0,0,0,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Verdana,sans-serif;background:linear-gradient(135deg,var(--p),var(--p2));min-height:100vh;padding:18px;color:var(--ink)}
+button,input,select,textarea{font:inherit}.hidden{display:none!important}.container{max-width:1250px;margin:auto}
+.header{text-align:center;color:#fff;padding:16px 0 24px}.header h1{font-size:2.35rem;margin-bottom:8px;text-shadow:2px 2px 5px rgba(0,0,0,.25)}.header p{opacity:.92}
+.nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:22px}.nav button{border:0;padding:11px 18px;border-radius:999px;background:#fff;color:var(--p);font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.1)}.nav button.active{background:var(--p2);color:#fff}
+.panel{background:#fff;border-radius:18px;padding:28px;box-shadow:var(--shadow);margin-bottom:22px}.panel h2{margin-bottom:20px}.grid{display:grid;gap:18px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{margin-bottom:15px}.field label{display:block;font-weight:700;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:10px;outline:none;background:#fff}.field textarea{min-height:120px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(102,126,234,.12)}
+.btn{border:0;border-radius:10px;padding:12px 16px;cursor:pointer;font-weight:800}.btn.primary{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff}.btn.secondary{background:#eef1ff;color:#4c5bd4}.btn.danger{background:#fee2e2;color:#991b1b}.btn.small{padding:8px 11px;font-size:.88rem}.btn:disabled{opacity:.65;cursor:not-allowed}
+.auth-wrap{max-width:560px;margin:0 auto}.role-tabs{display:flex;gap:8px;margin-bottom:15px}.role-tabs button{flex:1;padding:10px;border:0;border-radius:10px;background:#f2f4f8;color:#555;font-weight:800;cursor:pointer}.role-tabs button.active{background:#ede9fe;color:#5b21b6}
+.auth-switch{display:flex;justify-content:center;gap:8px;margin-top:16px;font-size:.95rem}.linkbtn{border:0;background:none;color:#5b21b6;font-weight:800;cursor:pointer}
+.msg{padding:13px 15px;border-radius:10px;margin-bottom:16px;display:none}.msg.show{display:block}.msg.success{background:#dcfce7;color:#166534;border-left:4px solid #22c55e}.msg.error{background:#fee2e2;color:#991b1b;border-left:4px solid #ef4444}.msg.info{background:#eef2ff;color:#3730a3;border-left:4px solid #6366f1}
+.dashboard-head{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:20px}.user-chip{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:#f3f4f6;color:#374151;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.stat{padding:18px;border-radius:14px;background:linear-gradient(135deg,#f7f7ff,#f7f3fb);border:1px solid #ece9f8}.stat b{display:block;font-size:1.8rem;margin-bottom:4px}.stat span{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}.card{background:#fafafa;border:1px solid #ededed;border-left:5px solid var(--p);border-radius:14px;padding:18px}.card h3{margin-bottom:10px}.card p{color:#5b6170;line-height:1.5;margin-bottom:7px}.card .row{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #e7e7e7}.badge{padding:6px 10px;border-radius:999px;font-weight:800;font-size:.78rem}.pending{background:#fff3cd;color:#856404}.assigned{background:#cffafe;color:#155e75}.progress{background:#dbeafe;color:#1d4ed8}.resolved{background:#dcfce7;color:#166534}.closed{background:#e5e7eb;color:#374151}
+.photo-box{margin-top:12px;background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:10px}.photo-box img{width:100%;max-height:280px;object-fit:contain;border-radius:8px;background:#f4f4f5}.photo-placeholder{padding:35px 10px;text-align:center;color:#9ca3af}
+.filterbar{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-bottom:20px}.filterbar input,.filterbar select{padding:11px;border:2px solid var(--line);border-radius:10px}
+.timeline{margin-top:15px}.timeline-item{display:flex;gap:12px;margin-bottom:14px}.dot{width:30px;height:30px;min-width:30px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}.timeline-item p{margin:0}.muted{color:var(--muted)}
+.upload{border:2px dashed var(--p);border-radius:12px;padding:22px;text-align:center;background:#fafbff;cursor:pointer}.upload p{color:var(--p);font-weight:800}.upload small{color:#9ca3af}.upload input{display:none}.preview{margin-top:10px}.preview img{max-width:100%;max-height:260px;border-radius:10px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}.modal-inner{background:#fff;border-radius:16px;max-width:900px;width:100%;max-height:92vh;overflow:auto;padding:18px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.modal img{width:100%;max-height:75vh;object-fit:contain;border-radius:10px;background:#f4f4f5}
+.empty,.loading{text-align:center;padding:35px;color:#8b93a1}.note{font-size:.9rem;color:#737b89}.staff-create{border-top:1px solid #eee;margin-top:25px;padding-top:25px}
+@media(max-width:900px){.grid.two,.grid.three,.stats{grid-template-columns:1fr 1fr}.filterbar{grid-template-columns:1fr 1fr}.filterbar input{grid-column:1/-1}}
+@media(max-width:600px){body{padding:10px}.header h1{font-size:1.75rem}.panel{padding:18px}.grid.two,.grid.three,.stats{grid-template-columns:1fr}.filterbar{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.nav button{padding:10px 13px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header class="header"><h1>🏛️ Complaint Tracking System</h1><p>Centurion University of Technology and Management</p></header>
+<nav class="nav" id="mainNav">
+<button class="active" data-view="home">🏠 Home</button>
+<button data-view="track">🔍 Track Complaint</button>
+<button data-view="auth" id="loginNav">🔐 Login</button>
+<button data-view="dashboard" id="dashboardNav" class="hidden">📊 Dashboard</button>
+<button id="logoutBtn" class="hidden">🚪 Logout</button>
+</nav>
+
+<section id="homeView" class="panel">
+<div class="auth-wrap">
+<h2 style="text-align:center">Welcome 👋</h2>
+<p class="note" style="text-align:center;margin-bottom:18px">Login to submit complaints and access your role dashboard. Complaint tracking by ID is available without login.</p>
+<div class="grid three">
+<div class="card"><h3>🎓 Student</h3><p>Submit a complaint, upload evidence and follow its status from your dashboard.</p></div>
+<div class="card"><h3>🧑‍💼 Staff</h3><p>See complaints assigned to you and update their progress.</p></div>
+<div class="card"><h3>👑 Admin</h3><p>Manage complaints, assign staff, review uploaded images and update status.</p></div>
+</div>
+<div style="text-align:center;margin-top:20px"><button class="btn primary" onclick="showView('auth')">Login / Student Signup</button></div>
+</div>
+</section>
+
+<section id="authView" class="panel hidden"><div class="auth-wrap">
+<div id="authMsg" class="msg"></div>
+<div class="role-tabs"><button data-role="student" class="active">🎓 Student</button><button data-role="staff">🧑‍💼 Staff</button><button data-role="admin">👑 Admin</button></div>
+<div id="studentAuth">
+<div id="studentLoginBox">
+<h2>Student Login</h2>
+<form id="studentLoginForm">
+<div class="field"><label>Email</label><input id="loginEmail" type="email" required></div>
+<div class="field"><label>Password</label><input id="loginPassword" type="password" minlength="6" required></div>
+<button class="btn primary" style="width:100%">Login</button>
+</form>
+<div class="auth-switch">New student? <button class="linkbtn" type="button" onclick="toggleStudentMode(true)">Create account</button></div>
+</div>
+<div id="studentSignupBox" class="hidden">
+<h2>Create Student Account</h2>
+<form id="studentSignupForm">
+<div class="grid two"><div class="field"><label>Full Name</label><input id="signupName" required></div><div class="field"><label>Phone</label><input id="signupPhone" required></div></div>
+<div class="field"><label>Email</label><input id="signupEmail" type="email" required></div>
+<div class="field"><label>Password</label><input id="signupPassword" type="password" minlength="6" required></div>
+<button class="btn primary" style="width:100%">Create Student Account</button>
+</form>
+<div class="auth-switch">Already registered? <button class="linkbtn" type="button" onclick="toggleStudentMode(false)">Login</button></div>
+</div>
+</div>
+<div id="staffAuth" class="hidden"><h2>Staff Login</h2><div class="note" style="margin-bottom:14px">Staff accounts are created by the administrator.</div><form id="staffLoginForm"><div class="field"><label>Email</label><input id="staffEmail" type="email" required></div><div class="field"><label>Password</label><input id="staffPassword" type="password" required></div><button class="btn primary" style="width:100%">Staff Login</button></form></div>
+<div id="adminAuth" class="hidden"><h2>Admin Login</h2><div class="note" style="margin-bottom:14px">Use the ADMIN_EMAIL and ADMIN_PASSWORD configured in Render.</div><form id="adminLoginForm"><div class="field"><label>Admin Email</label><input id="adminEmail" type="email" required></div><div class="field"><label>Admin Password</label><input id="adminPassword" type="password" required></div><button class="btn primary" style="width:100%">Admin Login</button></form></div>
+</div></section>
+
+<section id="trackView" class="panel hidden"><h2>Track Your Complaint</h2><form id="trackForm" class="grid two" style="align-items:end"><div class="field" style="margin:0"><label>Complaint ID</label><input id="trackId" placeholder="e.g. CU-2026-348040" required></div><button class="btn primary" style="height:48px">Search Complaint</button></form><div id="trackMsg" class="msg" style="margin-top:15px"></div><div id="trackResult" class="hidden" style="margin-top:18px"></div></section>
+
+<section id="studentView" class="panel hidden"><div class="dashboard-head"><div><h2>Student Dashboard</h2><span class="user-chip" id="studentUserChip"></span></div><button class="btn secondary" onclick="refreshStudent()">↻ Refresh</button></div>
+<div class="stats" id="studentStats"></div>
+<div class="grid two">
+<div>
+<h2 style="font-size:1.25rem">Submit a Complaint</h2><div id="studentSubmitMsg" class="msg"></div>
+<form id="complaintForm">
+<div class="grid two"><div class="field"><label>Student Name</label><input id="studentName" readonly></div><div class="field"><label>Phone</label><input id="studentPhone" readonly></div></div>
+<div class="field"><label>Email</label><input id="studentEmail" readonly></div>
+<div class="field"><label>Complaint Category</label><select id="complaintCategory" required><option value="">-- Select Category --</option><option value="classroom">🚪 Classroom Equipment</option><option value="wifi">📡 Wi-Fi</option><option value="electricity">⚡ Electricity</option><option value="hostel">🏠 Hostel</option><option value="cleanliness">🧹 Cleanliness</option><option value="lab">🔬 Lab Equipment</option><option value="other">📌 Other</option></select></div>
+<div class="field"><label>Description</label><textarea id="complaintDescription" required placeholder="Describe your complaint in detail..."></textarea></div>
+<div class="upload" id="uploadArea"><p>📤 Click to upload or drag & drop</p><small>PNG/JPG/GIF, maximum 5 MB</small><input id="photoUpload" type="file" accept="image/*"></div><div class="preview hidden" id="filePreview"><img id="previewImg" alt="Preview"></div>
+<button class="btn primary" style="width:100%" id="submitButton">Submit Complaint</button></form>
+</div>
+<div><h2 style="font-size:1.25rem">My Complaints</h2><div id="studentComplaints" class="cards"></div></div>
+</div></section>
+
+<section id="staffView" class="panel hidden"><div class="dashboard-head"><div><h2>Staff Dashboard</h2><span class="user-chip" id="staffUserChip"></span></div><button class="btn secondary" onclick="refreshStaff()">↻ Refresh</button></div><div class="stats" id="staffStats"></div><div id="staffComplaints" class="cards"></div></section>
+
+<section id="adminView" class="panel hidden"><div class="dashboard-head"><div><h2>Admin Dashboard</h2><span class="user-chip" id="adminUserChip"></span></div><button class="btn secondary" onclick="refreshAdmin()">↻ Refresh</button></div><div class="stats" id="adminStats"></div>
+<div class="filterbar"><input id="adminSearch" placeholder="Search ID, name or category"><select id="adminStatus"><option value="">All Status</option><option value="pending">Pending</option><option value="assigned">Assigned</option><option value="progress">In Progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select><select id="adminCategory"><option value="">All Categories</option><option value="classroom">Classroom</option><option value="wifi">Wi-Fi</option><option value="electricity">Electricity</option><option value="hostel">Hostel</option><option value="cleanliness">Cleanliness</option><option value="lab">Lab</option><option value="other">Other</option></select><button class="btn secondary" onclick="loadAdminComplaints()">Filter</button></div>
+<div id="adminComplaints" class="cards"></div>
+<div class="staff-create"><h2 style="font-size:1.25rem">Create Staff Account</h2><div id="staffCreateMsg" class="msg"></div><form id="staffCreateForm" class="grid three"><div class="field"><label>Name</label><input id="newStaffName" required></div><div class="field"><label>Email</label><input id="newStaffEmail" type="email" required></div><div class="field"><label>Department</label><input id="newStaffDepartment" placeholder="IT / Maintenance / Hostel" required></div><div class="field"><label>Phone</label><input id="newStaffPhone"></div><div class="field"><label>Password</label><input id="newStaffPassword" type="password" minlength="6" required></div><div style="display:flex;align-items:end"><button class="btn primary" style="width:100%">Create Staff</button></div></form></div></section>
+
+<div id="photoModal" class="modal hidden"><div class="modal-inner"><div class="modal-head"><h3>Uploaded Complaint Image</h3><button class="btn danger small" onclick="closePhotoModal()">Close</button></div><div id="modalPhotoContent"><div class="loading">Loading image...</div></div></div></div>
+
+<script>
+const BACKEND_URL='https://college-complain-backend.onrender.com';
+const API_BASE=BACKEND_URL+'/api';
+let token=sessionStorage.getItem('cc_token')||null;
+let currentUser=JSON.parse(sessionStorage.getItem('cc_user')||'null');
+let currentRole=currentUser?.role||null;
+let studentComplaints=[];let staffComplaints=[];let adminComplaints=[];let staffList=[];
+const VIEWS=['home','auth','track','student','staff','admin'];
+const $=id=>document.getElementById(id);
+
+function showView(view){
+  VIEWS.forEach(v=>$(v+'View')?.classList.add('hidden'));
+  if(view==='dashboard') view=currentRole||'home';
+  $(view+'View')?.classList.remove('hidden');
+  document.querySelectorAll('#mainNav button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view||(b.dataset.view==='dashboard'&&['student','staff','admin'].includes(view))));
+  if(view==='student'&&token) refreshStudent();
+  if(view==='staff'&&token) refreshStaff();
+  if(view==='admin'&&token) refreshAdmin();
+}
+document.querySelectorAll('#mainNav button[data-view]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.view==='dashboard'&&!token){showView('auth');return}showView(b.dataset.view)}));
+
+document.querySelectorAll('.role-tabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.role-tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  ['student','staff','admin'].forEach(r=>$(r+'Auth').classList.toggle('hidden',r!==b.dataset.role));
+  clearMsg('authMsg');
+}));
+function toggleStudentMode(signup){$('studentLoginBox').classList.toggle('hidden',signup);$('studentSignupBox').classList.toggle('hidden',!signup);clearMsg('authMsg')}
+function setMsg(id,text,type='error'){const el=$(id);if(!el)return;el.textContent=text;el.className='msg '+type+' show'}
+function clearMsg(id){const el=$(id);if(el){el.textContent='';el.className='msg'}}
+function escapeHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+function formatDate(v){if(!v)return'-';const d=new Date(v);return Number.isNaN(d.getTime())?String(v):d.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}
+function statusLabel(s){return({pending:'Pending',assigned:'Assigned',progress:'In Progress',resolved:'Resolved',closed:'Closed'}[s]||s).toUpperCase()}
+function authHeaders(json=true){const h={};if(json)h['Content-Type']='application/json';if(token)h.Authorization='Bearer '+token;return h}
+async function api(path,options={}){const opts={...options,headers:{...authHeaders(!(options.body instanceof FormData)),...(options.headers||{})}};const res=await fetch(API_BASE+path,opts);let data={};try{data=await res.json()}catch{}if(!res.ok){if(res.status===401){logout(false);showView('auth')}throw new Error(data.message||'Request failed')}return data}
+
+async function login(email,password){const data=await api('/auth/login',{method:'POST',body:JSON.stringify({email,password})});token=data.token;currentUser=data.user;currentRole=currentUser.role;sessionStorage.setItem('cc_token',token);sessionStorage.setItem('cc_user',JSON.stringify(currentUser));updateNav();showView(currentRole);setMsg(currentRole==='student'?'studentSubmitMsg':'authMsg', 'Login successful', 'success')}
+function updateNav(){ $('loginNav').classList.toggle('hidden',!!token);$('dashboardNav').classList.toggle('hidden',!token);$('logoutBtn').classList.toggle('hidden',!token)}
+function logout(message=true){token=null;currentUser=null;currentRole=null;sessionStorage.removeItem('cc_token');sessionStorage.removeItem('cc_user');updateNav();showView('home');if(message)setMsg('authMsg','Logged out successfully','success')}
+$('logoutBtn').addEventListener('click',()=>logout(true));
+
+$('studentLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{await login($('loginEmail').value.trim(),$('loginPassword').value)}catch(err){setMsg('authMsg',err.message)}});
+$('staffLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{await login($('staffEmail').value.trim(),$('staffPassword').value)}catch(err){setMsg('authMsg',err.message)}});
+$('adminLoginForm').addEventListener('submit',async e=>{e.preventDefault();try{await login($('adminEmail').value.trim(),$('adminPassword').value)}catch(err){setMsg('authMsg',err.message)}});
+$('studentSignupForm').addEventListener('submit',async e=>{e.preventDefault();try{const data=await api('/auth/register',{method:'POST',body:JSON.stringify({name:$('signupName').value.trim(),phone:$('signupPhone').value.trim(),email:$('signupEmail').value.trim(),password:$('signupPassword').value})});token=data.token;currentUser=data.user;currentRole='student';sessionStorage.setItem('cc_token',token);sessionStorage.setItem('cc_user',JSON.stringify(currentUser));updateNav();showView('student')}catch(err){setMsg('authMsg',err.message)}});
+
+// Upload
+$('uploadArea').addEventListener('click',()=> $('photoUpload').click());['dragenter','dragover'].forEach(ev=>$('uploadArea').addEventListener(ev,e=>{e.preventDefault();$('uploadArea').style.background='#eef1ff'}));['dragleave','drop'].forEach(ev=>$('uploadArea').addEventListener(ev,e=>{e.preventDefault();$('uploadArea').style.background='#fafbff'}));$('uploadArea').addEventListener('drop',e=>{if(e.dataTransfer.files?.[0]){$('photoUpload').files=e.dataTransfer.files;handleFile()}});$('photoUpload').addEventListener('change',handleFile);
+function handleFile(){const f=$('photoUpload').files?.[0];if(!f)return;if(f.size>5*1024*1024){alert('Photo must be 5 MB or smaller');$('photoUpload').value='';return}if(!f.type.startsWith('image/')){alert('Please select an image');$('photoUpload').value='';return}const rd=new FileReader();rd.onload=e=>{$('previewImg').src=e.target.result;$('filePreview').classList.remove('hidden')};rd.readAsDataURL(f)}
+
+$('complaintForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('submitButton');btn.disabled=true;btn.textContent='Submitting...';clearMsg('studentSubmitMsg');try{const fd=new FormData();fd.append('category',$('complaintCategory').value);fd.append('description',$('complaintDescription').value.trim());const photo=$('photoUpload').files?.[0];if(photo)fd.append('photo',photo);const data=await api('/complaints',{method:'POST',body:fd});setMsg('studentSubmitMsg',`Complaint submitted successfully. ID: ${data.complaint?.id||data.complaintId}`,'success');$('complaintForm').reset();$('filePreview').classList.add('hidden');$('previewImg').src='';await refreshStudent()}catch(err){setMsg('studentSubmitMsg',err.message)}finally{btn.disabled=false;btn.textContent='Submit Complaint'}});
+
+async function refreshStudent(){if(!token)return;currentUser=currentUser||JSON.parse(sessionStorage.getItem('cc_user'));$('studentUserChip').textContent=`${currentUser?.name||''} • ${currentUser?.email||''}`;$('studentName').value=currentUser?.name||'';$('studentPhone').value=currentUser?.phone||'';$('studentEmail').value=currentUser?.email||'';try{const d=await api('/complaints/mine');studentComplaints=d.complaints||[];renderStudentStats();renderStudentComplaints()}catch(err){setMsg('studentSubmitMsg',err.message)}}
+function renderStudentStats(){const c=studentComplaints;const count=s=>c.filter(x=>x.status===s).length;$('studentStats').innerHTML=`<div class="stat"><b>${c.length}</b><span>Total Complaints</span></div><div class="stat"><b>${count('pending')}</b><span>Pending</span></div><div class="stat"><b>${count('progress')+count('assigned')}</b><span>In Process</span></div><div class="stat"><b>${count('resolved')+count('closed')}</b><span>Completed</span></div>`}
+function renderStudentComplaints(){if(!studentComplaints.length){$('studentComplaints').innerHTML='<div class="empty">No complaints submitted yet.</div>';return}$('studentComplaints').innerHTML=studentComplaints.map(c=>complaintCard(c,'student')).join('')}
+
+async function refreshStaff(){if(!token)return;currentUser=currentUser||JSON.parse(sessionStorage.getItem('cc_user'));$('staffUserChip').textContent=`${currentUser?.name||''} • ${currentUser?.department||''}`;try{const d=await api('/complaints/assigned');staffComplaints=d.complaints||[];renderStaffStats();renderStaffComplaints()}catch(err){$('staffComplaints').innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`}}
+function renderStaffStats(){const c=staffComplaints;const count=s=>c.filter(x=>x.status===s).length;$('staffStats').innerHTML=`<div class="stat"><b>${c.length}</b><span>Assigned</span></div><div class="stat"><b>${count('assigned')}</b><span>New</span></div><div class="stat"><b>${count('progress')}</b><span>In Progress</span></div><div class="stat"><b>${count('resolved')+count('closed')}</b><span>Completed</span></div>`}
+function renderStaffComplaints(){if(!staffComplaints.length){$('staffComplaints').innerHTML='<div class="empty">No complaints are currently assigned to you.</div>';return}$('staffComplaints').innerHTML=staffComplaints.map(c=>complaintCard(c,'staff')).join('')}
+
+async function refreshAdmin(){if(!token)return;currentUser=currentUser||JSON.parse(sessionStorage.getItem('cc_user'));$('adminUserChip').textContent=`${currentUser?.email||''} • Administrator`;try{const s=await api('/staff');staffList=s.staff||[];await loadAdminComplaints()}catch(err){$('adminComplaints').innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`}}
+async function loadAdminComplaints(){try{const p=new URLSearchParams();if($('adminSearch').value.trim())p.set('search',$('adminSearch').value.trim());if($('adminStatus').value)p.set('status',$('adminStatus').value);if($('adminCategory').value)p.set('category',$('adminCategory').value);const d=await api('/complaints?'+p.toString());adminComplaints=d.complaints||[];renderAdminStats(d.pagination?.total??adminComplaints.length);renderAdminComplaints()}catch(err){$('adminComplaints').innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`}}
+function renderAdminStats(total){const c=adminComplaints;const count=s=>c.filter(x=>x.status===s).length;$('adminStats').innerHTML=`<div class="stat"><b>${total||0}</b><span>Total Complaints</span></div><div class="stat"><b>${count('pending')}</b><span>Pending</span></div><div class="stat"><b>${count('assigned')+count('progress')}</b><span>Active</span></div><div class="stat"><b>${count('resolved')+count('closed')}</b><span>Completed</span></div>`}
+function renderAdminComplaints(){if(!adminComplaints.length){$('adminComplaints').innerHTML='<div class="empty">No complaints found.</div>';return}$('adminComplaints').innerHTML=adminComplaints.map(c=>complaintCard(c,'admin')).join('')}
+
+function complaintCard(c,role){const assigned=c.assignedTo?.name||'Not assigned';const photo=c.photoUrl?`<div class="photo-box"><img id="thumb-${escapeHtml(c.id)}" alt="Uploaded complaint image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3C/svg%3E"><button class="btn secondary small" style="margin-top:8px" onclick="viewPhoto('${encodeURIComponent(c.id)}')">🖼️ View uploaded image</button></div>`:'';let controls='';if(role==='admin'){const staffOptions=staffList.map(s=>`<option value="${escapeHtml(s.id)}" ${String(c.assignedTo?.id)===String(s.id)?'selected':''}>${escapeHtml(s.name)} — ${escapeHtml(s.department||'')}</option>`).join('');controls=`<div style="margin-top:12px"><label class="note">Assign Staff</label><select style="width:100%;margin-top:5px;padding:9px;border:1px solid #ddd;border-radius:8px" onchange="assignComplaint('${encodeURIComponent(c.id)}',this.value)"><option value="">-- Unassigned --</option>${staffOptions}</select></div>`}
+if(role==='admin'||role==='staff'){controls+=`<div style="margin-top:10px"><label class="note">Update Status</label><select style="width:100%;margin-top:5px;padding:9px;border:1px solid #ddd;border-radius:8px" onchange="updateStatus('${encodeURIComponent(c.id)}',this.value,'${role}')"><option value="pending" ${c.status==='pending'?'selected':''}>Pending</option><option value="assigned" ${c.status==='assigned'?'selected':''}>Assigned</option><option value="progress" ${c.status==='progress'?'selected':''}>In Progress</option><option value="resolved" ${c.status==='resolved'?'selected':''}>Resolved</option><option value="closed" ${c.status==='closed'?'selected':''}>Closed</option></select></div><div style="margin-top:8px"><input id="msg-${escapeHtml(c.id)}-${role}" placeholder="Optional status note" style="width:100%;padding:9px;border:1px solid #ddd;border-radius:8px"></div>`}
+return `<div class="card"><h3>${escapeHtml(c.id)}</h3><p><strong>Student:</strong> ${escapeHtml(c.name||'-')}</p><p><strong>Email:</strong> ${escapeHtml(c.email||'-')}</p><p><strong>Phone:</strong> ${escapeHtml(c.phone||'-')}</p><p><strong>Category:</strong> ${escapeHtml(c.category||'-')}</p><p><strong>Description:</strong> ${escapeHtml(c.description||'-')}</p><p><strong>Assigned to:</strong> ${escapeHtml(assigned)}</p>${photo}<div class="row"><span class="badge ${escapeHtml(c.status)}">${statusLabel(c.status)}</span><span class="muted">${escapeHtml(formatDate(c.submittedDate))}</span></div>${controls}<div style="margin-top:14px"><button class="btn secondary small" onclick="viewTimeline('${encodeURIComponent(c.id)}')">View Timeline</button></div></div>`}
+
+async function updateStatus(id,status,role){const roleKey=role||currentRole;const noteEl=$(`msg-${decodeURIComponent(id)}-${roleKey}`);const message=noteEl?.value.trim()||'';try{await api(`/complaints/${decodeURIComponent(id)}/status`,{method:'PATCH',body:JSON.stringify({status,message})});if(roleKey==='staff')await refreshStaff();else await loadAdminComplaints()}catch(err){alert(err.message)}}
+async function assignComplaint(id,staffId){try{await api(`/complaints/${decodeURIComponent(id)}/assign`,{method:'PATCH',body:JSON.stringify({staffId:staffId||null})});await loadAdminComplaints()}catch(err){alert(err.message)}}
+async function viewPhoto(id){const modal=$('photoModal');const content=$('modalPhotoContent');modal.classList.remove('hidden');content.innerHTML='<div class="loading">Loading image...</div>';try{const res=await fetch(`${API_BASE}/complaints/${decodeURIComponent(id)}/photo`,{headers:{Authorization:'Bearer '+token}});if(!res.ok){let d={};try{d=await res.json()}catch{}throw new Error(d.message||'Photo unavailable')}const blob=await res.blob();const url=URL.createObjectURL(blob);content.innerHTML=`<img src="${url}" alt="Complaint image">`;content.dataset.objectUrl=url}catch(err){content.innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`}}
+function closePhotoModal(){const c=$('modalPhotoContent');if(c.dataset.objectUrl)URL.revokeObjectURL(c.dataset.objectUrl);c.dataset.objectUrl='';$('photoModal').classList.add('hidden')}
+async function viewTimeline(id){try{const d=await api(`/complaints/${decodeURIComponent(id)}/details`);const t=d.complaint?.timeline||[];alert(t.map((x,i)=>`${i+1}. ${statusLabel(x.status)} — ${x.message} (${formatDate(x.date)})`).join('\n\n')||'No timeline entries')}catch(err){alert(err.message)}}
+
+$('trackForm').addEventListener('submit',async e=>{e.preventDefault();clearMsg('trackMsg');$('trackResult').classList.add('hidden');try{const id=$('trackId').value.trim().toUpperCase();const d=await api('/complaints/'+encodeURIComponent(id));const c=d.complaint;renderTrack(c)}catch(err){setMsg('trackMsg',err.message)}});
+function renderTrack(c){const timeline=(c.timeline||[]).map((x,i)=>`<div class="timeline-item"><div class="dot">${i+1}</div><div><p><strong>${escapeHtml(statusLabel(x.status))}</strong></p><p>${escapeHtml(x.message)}</p><p class="muted">${escapeHtml(formatDate(x.date))}</p></div></div>`).join('');$('trackResult').innerHTML=`<div class="card"><h3>${escapeHtml(c.category||'Complaint').toUpperCase()}</h3><p><strong>Complaint ID:</strong> ${escapeHtml(c.id)}</p><p><strong>Category:</strong> ${escapeHtml(c.category)}</p><p><strong>Description:</strong> ${escapeHtml(c.description)}</p><p><strong>Submitted:</strong> ${escapeHtml(formatDate(c.submittedDate))}</p><div class="row"><span class="badge ${escapeHtml(c.status)}">${statusLabel(c.status)}</span><span class="muted">Updated: ${escapeHtml(formatDate(c.updatedAt))}</span></div><div style="margin-top:18px"><h4>Status Timeline</h4><div class="timeline">${timeline}</div></div></div>`;$('trackResult').classList.remove('hidden')}
+
+$('staffCreateForm').addEventListener('submit',async e=>{e.preventDefault();clearMsg('staffCreateMsg');try{const d=await api('/auth/staff',{method:'POST',body:JSON.stringify({name:$('newStaffName').value.trim(),email:$('newStaffEmail').value.trim(),department:$('newStaffDepartment').value.trim(),phone:$('newStaffPhone').value.trim(),password:$('newStaffPassword').value})});setMsg('staffCreateMsg',`Staff account created for ${d.staff?.name||'staff member'}.`,'success');$('staffCreateForm').reset();const s=await api('/staff');staffList=s.staff||[];await loadAdminComplaints()}catch(err){setMsg('staffCreateMsg',err.message)}});
+
+updateNav();showView(token?(currentRole||'home'):'home');
+</script>
+</div></body></html>
