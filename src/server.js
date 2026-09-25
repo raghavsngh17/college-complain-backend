@@ -32,7 +32,7 @@ app.use("/api/auth", rateLimit({ windowMs: 15 * 60 * 1000, limit: 60, standardHe
 
 app.get("/", (req, res) => res.json({
   success: true,
-  service: "Centurion University Complaint Tracking API v3",
+  service: "Centurion University Complaint Tracking API v5"",
   status: mongoose.connection.readyState === 1 ? "database_connected" : "database_not_connected"
 }));
 
