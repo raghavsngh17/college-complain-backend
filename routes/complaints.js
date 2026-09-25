@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const Complaint = require("../models/Complaint");
 const User = require("../models/User");
 const { requireAuth, requireRole } = require("../middleware/auth");
+const { analyzeComplaint } = require("../src/ai");
 
 const router = express.Router();
 const MAX_FILE_SIZE =
