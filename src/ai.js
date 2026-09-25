@@ -1,6 +1,6 @@
 const { GoogleGenAI } = require("@google/genai");
 
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
 const ALLOWED_CATEGORIES = [
   "classroom",
