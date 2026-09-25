@@ -96,7 +96,53 @@ const complaintSchema = new mongoose.Schema(
       index: true,
     },
     assignedAt: Date,
-    timeline: { type: [timelineSchema], default: [] },
+   timeline: {type:[timelineSchema],default:[]},
+
+aiAnalysis: {
+  summary: {
+    type: String,
+    maxlength: 500
+  },
+  priority: {
+    type: String,
+    enum: ["low", "medium", "high", "critical"]
+  },
+  suggestedCategory: {
+    type: String,
+    enum: [
+      "classroom",
+      "wifi",
+      "electricity",
+      "hostel",
+      "cleanliness",
+      "lab",
+      "other"
+    ]
+  },
+  department: {
+    type: String,
+    maxlength: 150
+  },
+  recommendation: {
+    type: String,
+    maxlength: 1000
+  },
+  workNote: {
+    type: String,
+    maxlength: 1000
+  },
+  confidence: {
+    type: String,
+    enum: ["low", "medium", "high"]
+  },
+  model: {
+    type: String,
+    maxlength: 100
+  },
+  analyzedAt: {
+    type: Date
+  }
+}
   },
   { timestamps: true }
 );
