@@ -328,7 +328,7 @@ router.post(
       |--------------------------------------------------------------------------
       |
       | AI failure will NOT cancel the complaint.
-      | Complaint is already saved in MongoDB.
+      | Complaint is already safely saved in MongoDB.
       |
       */
       try {
