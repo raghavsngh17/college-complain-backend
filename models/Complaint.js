@@ -4,19 +4,114 @@ const timelineSchema = new mongoose.Schema(
   {
     status: {
       type: String,
-      enum: ["pending", "assigned", "progress", "resolved", "closed"],
+      enum: [
+        "pending",
+        "assigned",
+        "progress",
+        "resolved",
+        "closed",
+      ],
       required: true,
     },
-    date: { type: Date, default: Date.now },
-    message: { type: String, required: true, maxlength: 1000 },
+
+    date: {
+      type: Date,
+      default: Date.now,
+    },
+
+    message: {
+      type: String,
+      required: true,
+      maxlength: 1000,
+    },
+
     changedByRole: {
       type: String,
-      enum: ["student", "staff", "admin", "system"],
+      enum: [
+        "student",
+        "staff",
+        "admin",
+        "system",
+      ],
       default: "system",
     },
-    changedByName: { type: String, maxlength: 100 },
+
+    changedByName: {
+      type: String,
+      maxlength: 100,
+    },
   },
-  { _id: false }
+  {
+    _id: false,
+  }
+);
+
+const aiAnalysisSchema = new mongoose.Schema(
+  {
+    summary: {
+      type: String,
+      maxlength: 500,
+    },
+
+    priority: {
+      type: String,
+      enum: [
+        "low",
+        "medium",
+        "high",
+        "critical",
+      ],
+    },
+
+    suggestedCategory: {
+      type: String,
+      enum: [
+        "classroom",
+        "wifi",
+        "electricity",
+        "hostel",
+        "cleanliness",
+        "lab",
+        "other",
+      ],
+    },
+
+    department: {
+      type: String,
+      maxlength: 150,
+    },
+
+    recommendation: {
+      type: String,
+      maxlength: 1000,
+    },
+
+    workNote: {
+      type: String,
+      maxlength: 1000,
+    },
+
+    confidence: {
+      type: String,
+      enum: [
+        "low",
+        "medium",
+        "high",
+      ],
+    },
+
+    model: {
+      type: String,
+      maxlength: 100,
+    },
+
+    analyzedAt: {
+      type: Date,
+    },
+  },
+  {
+    _id: false,
+  }
 );
 
 const complaintSchema = new mongoose.Schema(
@@ -27,26 +122,27 @@ const complaintSchema = new mongoose.Schema(
       sparse: true,
       index: true,
     },
+
     id: {
       type: String,
       unique: true,
       index: true,
       required: true,
-      uppercase: true,
-      trim: true,
     },
+
     student: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       index: true,
-      required: true,
     },
+
     name: {
       type: String,
       required: true,
       trim: true,
       maxlength: 100,
     },
+
     email: {
       type: String,
       required: true,
@@ -54,12 +150,14 @@ const complaintSchema = new mongoose.Schema(
       lowercase: true,
       maxlength: 150,
     },
+
     phone: {
       type: String,
       required: true,
       trim: true,
       maxlength: 20,
     },
+
     category: {
       type: String,
       enum: [
@@ -73,35 +171,74 @@ const complaintSchema = new mongoose.Schema(
       ],
       required: true,
     },
+
     description: {
       type: String,
       required: true,
       trim: true,
       maxlength: 5000,
     },
+
     photo: {
       data: Buffer,
       contentType: String,
       originalName: String,
     },
+
     status: {
       type: String,
-      enum: ["pending", "assigned", "progress", "resolved", "closed"],
+      enum: [
+        "pending",
+        "assigned",
+        "progress",
+        "resolved",
+        "closed",
+      ],
       default: "pending",
       index: true,
     },
+
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       index: true,
     },
-    assignedAt: Date,
-    timeline: { type: [timelineSchema], default: [] },
+
+    assignedAt: {
+      type: Date,
+    },
+
+    timeline: {
+      type: [timelineSchema],
+      default: [],
+    },
+
+    /*
+    |--------------------------------------------------------------------------
+    | GEMINI AI ANALYSIS
+    |--------------------------------------------------------------------------
+    */
+    aiAnalysis: {
+      type: aiAnalysisSchema,
+      default: null,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-complaintSchema.index({ category: 1, status: 1 });
-complaintSchema.index({ createdAt: -1 });
+complaintSchema.index({
+  category: 1,
+  status: 1,
+});
 
-module.exports = mongoose.model("Complaint", complaintSchema);
+complaintSchema.index({
+  createdAt: -1,
+});
+
+module.exports =
+  mongoose.model(
+    "Complaint",
+    complaintSchema
+  );
