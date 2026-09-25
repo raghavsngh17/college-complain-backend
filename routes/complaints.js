@@ -94,7 +94,10 @@ function publicComplaint(c) {
   };
 }
 
-async function getComplaintWithRelations(id, includePhoto = false) {
+async function getComplaintWithRelations(
+  id,
+  includePhoto = false
+) {
   const query = Complaint.findOne({
     id: String(id).toUpperCase(),
   }).populate(
@@ -126,7 +129,8 @@ function canAccessComplaint(user, complaint) {
 
   if (user.role === "staff") {
     const assignedId =
-      complaint.assignedTo?._id || complaint.assignedTo;
+      complaint.assignedTo?._id ||
+      complaint.assignedTo;
 
     return (
       assignedId &&
@@ -142,7 +146,7 @@ function normalizePhotoData(photo) {
     return null;
   }
 
-  let data = photo.data;
+  const data = photo.data;
 
   const contentType =
     photo.contentType ||
@@ -159,7 +163,7 @@ function normalizePhotoData(photo) {
     };
   }
 
-  // BSON Binary returned by the native MongoDB driver.
+  // BSON Binary returned by MongoDB.
   if (
     data?._bsontype === "Binary" &&
     typeof data.value === "function"
@@ -226,7 +230,8 @@ router.post(
   upload.single("photo"),
   async (req, res) => {
     try {
-      const { category, description } = req.body || {};
+      const { category, description } =
+        req.body || {};
 
       if (!category || !description) {
         return res.status(400).json({
@@ -239,7 +244,8 @@ router.post(
       if (!CATEGORIES.includes(category)) {
         return res.status(400).json({
           success: false,
-          message: "Invalid complaint category",
+          message:
+            "Invalid complaint category",
         });
       }
 
@@ -270,13 +276,18 @@ router.post(
         });
       }
 
-      const id = await generateComplaintId();
+      const id =
+        await generateComplaintId();
 
       const photo = req.file
         ? {
-            data: Buffer.from(req.file.buffer),
-            contentType: req.file.mimetype,
-            originalName: req.file.originalname,
+            data: Buffer.from(
+              req.file.buffer
+            ),
+            contentType:
+              req.file.mimetype,
+            originalName:
+              req.file.originalname,
           }
         : undefined;
 
@@ -285,54 +296,73 @@ router.post(
       | SAVE COMPLAINT FIRST
       |--------------------------------------------------------------------------
       */
-      const complaint = await Complaint.create({
-        id,
-        student: student._id,
-        name: student.name,
-        email: student.email,
-        phone: student.phone || "",
-        category,
-        description: cleanDescription,
-        photo,
-        status: "pending",
+      const complaint =
+        await Complaint.create({
+          id,
+          student: student._id,
+          name: student.name,
+          email: student.email,
+          phone: student.phone || "",
+          category,
+          description: cleanDescription,
+          photo,
+          status: "pending",
 
-        timeline: [
-          {
-            status: "pending",
-            date: new Date(),
-            message: "Complaint submitted",
-            changedByRole: "student",
-            changedByName: student.name,
-          },
-        ],
-      });
+          timeline: [
+            {
+              status: "pending",
+              date: new Date(),
+              message:
+                "Complaint submitted",
+              changedByRole:
+                "student",
+              changedByName:
+                student.name,
+            },
+          ],
+        });
 
       /*
       |--------------------------------------------------------------------------
-      | AI ANALYSIS
+      | GEMINI AI ANALYSIS
       |--------------------------------------------------------------------------
       |
-      | AI failure will NOT fail the complaint submission.
-      | The complaint remains saved even if Gemini is unavailable,
-      | rate-limited, or returns an invalid response.
+      | AI failure will NOT cancel the complaint.
+      | Complaint is already saved in MongoDB.
       |
       */
       try {
-        const aiAnalysis = await analyzeComplaint({
-          category: complaint.category,
-          description: complaint.description,
-          photo: complaint.photo,
-        });
+        const aiAnalysis =
+          await analyzeComplaint({
+            category:
+              complaint.category,
+
+            description:
+              complaint.description,
+
+            photo:
+              complaint.photo,
+          });
 
         if (aiAnalysis) {
-          complaint.aiAnalysis = aiAnalysis;
+          complaint.aiAnalysis =
+            aiAnalysis;
 
           await complaint.save();
+
+          console.log(
+            `AI analysis completed for complaint ${complaint.id}`
+          );
+        } else {
+          console.log(
+            `AI analysis unavailable for complaint ${complaint.id}`
+          );
         }
       } catch (aiError) {
         console.error(
-          "AI analysis failed:",
-          aiError?.message || aiError
+          `AI analysis failed for complaint ${complaint.id}:`,
+          aiError?.message ||
+            aiError
         );
       }
 
@@ -343,6 +373,7 @@ router.post(
       */
       return res.status(201).json({
         success: true,
+
         message:
           "Complaint submitted successfully",
 
@@ -352,16 +383,20 @@ router.post(
           email: complaint.email,
           phone: complaint.phone,
           category: complaint.category,
-          description: complaint.description,
+          description:
+            complaint.description,
           status: complaint.status,
-          submittedDate: complaint.createdAt,
-          timeline: complaint.timeline,
+          submittedDate:
+            complaint.createdAt,
+          timeline:
+            complaint.timeline,
 
-          // AI result
           aiAnalysis:
-            complaint.aiAnalysis || null,
+            complaint.aiAnalysis ||
+            null,
 
-          hasPhoto: Boolean(req.file),
+          hasPhoto:
+            Boolean(req.file),
 
           photoUrl: req.file
             ? photoUrl(complaint.id)
@@ -514,14 +549,18 @@ router.get(
 
       if (
         status &&
-        STATUSES.includes(String(status))
+        STATUSES.includes(
+          String(status)
+        )
       ) {
         query.status = status;
       }
 
       if (
         category &&
-        CATEGORIES.includes(String(category))
+        CATEGORIES.includes(
+          String(category)
+        )
       ) {
         query.category = category;
       }
@@ -575,24 +614,28 @@ router.get(
         100
       );
 
-      const [items, total] =
-        await Promise.all([
-          Complaint.find(query)
-            .sort({ createdAt: -1 })
-            .skip(
-              (pageNumber - 1) *
-                pageSize
-            )
-            .limit(pageSize)
-            .select("-photo.data")
-            .populate(
-              "assignedTo",
-              "name email phone department"
-            )
-            .lean(),
+      const [
+        items,
+        total,
+      ] = await Promise.all([
+        Complaint.find(query)
+          .sort({ createdAt: -1 })
+          .skip(
+            (pageNumber - 1) *
+              pageSize
+          )
+          .limit(pageSize)
+          .select("-photo.data")
+          .populate(
+            "assignedTo",
+            "name email phone department"
+          )
+          .lean(),
 
-          Complaint.countDocuments(query),
-        ]);
+        Complaint.countDocuments(
+          query
+        ),
+      ]);
 
       return res.json({
         success: true,
@@ -634,8 +677,7 @@ router.get(
 |--------------------------------------------------------------------------
 | VIEW COMPLAINT PHOTO
 |--------------------------------------------------------------------------
-| IMPORTANT:
-| This route must stay ABOVE /:id
+| MUST stay ABOVE /:id
 |--------------------------------------------------------------------------
 */
 router.get(
@@ -680,7 +722,8 @@ router.get(
       ) {
         return res.status(404).json({
           success: false,
-          message: "Photo not found",
+          message:
+            "Photo not found",
         });
       }
 
@@ -692,7 +735,8 @@ router.get(
       res.set(
         "Content-Disposition",
         `inline; filename="${String(
-          complaint.photo?.originalName ||
+          complaint.photo
+            ?.originalName ||
             "complaint-image"
         ).replace(
           /["\\\r\n]/g,
@@ -877,11 +921,15 @@ router.patch(
         );
 
       if (!staffId) {
-        doc.assignedTo = undefined;
-        doc.assignedAt = undefined;
+        doc.assignedTo =
+          undefined;
+
+        doc.assignedAt =
+          undefined;
 
         if (
-          doc.status === "assigned"
+          doc.status ===
+          "assigned"
         ) {
           doc.status = "pending";
         }
@@ -891,7 +939,8 @@ router.patch(
           date: new Date(),
           message:
             "Complaint unassigned by administrator",
-          changedByRole: "admin",
+          changedByRole:
+            "admin",
           changedByName:
             req.user.name,
         });
@@ -929,7 +978,8 @@ router.patch(
         doc.assignedAt =
           new Date();
 
-        doc.status = "assigned";
+        doc.status =
+          "assigned";
 
         doc.timeline.push({
           status: "assigned",
@@ -940,7 +990,8 @@ router.patch(
             staff.department ||
             "Staff"
           })`,
-          changedByRole: "admin",
+          changedByRole:
+            "admin",
           changedByName:
             req.user.name,
         });
@@ -955,6 +1006,7 @@ router.patch(
 
       return res.json({
         success: true,
+
         message:
           "Assignment updated",
 
@@ -962,7 +1014,8 @@ router.patch(
           publicComplaint({
             ...updated,
             hasPhoto: Boolean(
-              updated.photo?.contentType
+              updated.photo
+                ?.contentType
             ),
           }),
       });
@@ -1021,10 +1074,12 @@ router.patch(
       }
 
       if (
-        req.user.role === "staff"
+        req.user.role ===
+        "staff"
       ) {
         const assignedId =
-          complaint.assignedTo?._id ||
+          complaint.assignedTo
+            ?._id ||
           complaint.assignedTo;
 
         if (
@@ -1069,13 +1124,16 @@ router.patch(
 
       return res.json({
         success: true,
+
         message:
           "Complaint status updated",
 
         complaint: {
           id: doc.id,
-          status: doc.status,
-          timeline: doc.timeline,
+          status:
+            doc.status,
+          timeline:
+            doc.timeline,
           updatedAt:
             doc.updatedAt,
         },
@@ -1103,8 +1161,10 @@ router.patch(
 router.use(
   (err, req, res, next) => {
     if (
-      err instanceof multer.MulterError &&
-      err.code === "LIMIT_FILE_SIZE"
+      err instanceof
+        multer.MulterError &&
+      err.code ===
+        "LIMIT_FILE_SIZE"
     ) {
       return res.status(400).json({
         success: false,
